@@ -1,47 +1,36 @@
 import os
+import streamlit as st
 from dotenv import load_dotenv
 
-import streamlit as st
-import os
-
-for key in ["LANGCHAIN_API_KEY", "LANGCHAIN_PROJECT"]:
-    if key in st.secrets:
-        os.environ[key] = st.secrets[key]
-
-
-
-
 from langchain_community.llms import Ollama
-import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
-## Langsmith Tracking
-os.environ["LANGCHAIN_API_KEY"]=os.getenv("LANGCHAIN_API_KEY")
-os.environ["LANGCHAIN_TRACING_V2"]="true"
-os.environ["LANGCHAIN_PROJECT"]=os.getenv("LANGCHAIN_PROJECT")
+# Load secrets for Streamlit Cloud
+for key in ["LANGCHAIN_API_KEY", "LANGCHAIN_PROJECT"]:
+    if key in st.secrets:
+        os.environ[key] = st.secrets[key]
+
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
 ## Prompt Template
-prompt=ChatPromptTemplate.from_messages(
+prompt = ChatPromptTemplate.from_messages(
     [
         ("system","You are a helpful assistant. Please respond to the question asked"),
         ("user","Question:{question}")
     ]
 )
 
-## streamlit framework
-st.title("Q&A Model with ollama")
-input_text=st.text_input("What question you have in mind?")
+## Streamlit UI
+st.title("Q&A Model with Ollama")
+input_text = st.text_input("What question you have in mind?")
 
-
-## Ollama Llama2 model
-llm=Ollama(model="gemma2:2b")
-output_parser=StrOutputParser()
-chain=prompt|llm|output_parser
+## Ollama model
+llm = Ollama(model="gemma2:2b")
+output_parser = StrOutputParser()
+chain = prompt | llm | output_parser
 
 if input_text:
-    st.write(chain.invoke({"question":input_text}))
-
-
+    st.write(chain.invoke({"question": input_text}))
