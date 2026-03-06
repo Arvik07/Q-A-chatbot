@@ -1,6 +1,16 @@
 import os
 from dotenv import load_dotenv
 
+import streamlit as st
+import os
+
+for key in ["LANGCHAIN_API_KEY", "LANGCHAIN_PROJECT"]:
+    if key in st.secrets:
+        os.environ[key] = st.secrets[key]
+
+
+
+
 from langchain_community.llms import Ollama
 import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate
